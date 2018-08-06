@@ -33,6 +33,8 @@ def get_candle(pair, timeframe, start_ts, pair_index):
         startTime=start_ts * 1000,
         endTime=None
     )
+    if len(data) < 1:
+        return None
     #print(data)
     #assert 1 <= len(data) <= 2
     rec = data[0]
