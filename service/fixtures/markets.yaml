@@ -1,0 +1,5 @@
+- model: service.Market
+  pk: 1
+  fields:
+    name: 'Binance'
+    url: 'www.binance.com'

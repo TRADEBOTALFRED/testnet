@@ -1,0 +1,6 @@
+- model: service.Pair
+  pk: 1
+  fields:
+    name: 'ETHBTC'
+    market: 1
+

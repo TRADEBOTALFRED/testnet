@@ -1,0 +1,53 @@
+- model: service.Timeframe
+  pk: 1
+  fields:
+    name: '5 min'
+    minutes: 5
+
+- model: service.Timeframe
+  pk: 2
+  fields:
+    name: '10 min'
+    minutes: 10
+
+- model: service.Timeframe
+  pk: 3
+  fields:
+    name: '15 min'
+    minutes: 15
+
+- model: service.Timeframe
+  pk: 4
+  fields:
+    name: '30 min'
+    minutes: 30
+
+- model: service.Timeframe
+  pk: 5
+  fields:
+    name: '1 H'
+    minutes: 60
+
+- model: service.Timeframe
+  pk: 6
+  fields:
+    name: '2 H'
+    minutes: 120
+
+- model: service.Timeframe
+  pk: 7
+  fields:
+    name: '4 H'
+    minutes: 240
+
+- model: service.Timeframe
+  pk: 8
+  fields:
+    name: '12 H'
+    minutes: 720
+
+- model: service.Timeframe
+  pk: 9
+  fields:
+    name: '1 D'
+    minutes: 1440
