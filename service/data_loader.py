@@ -67,6 +67,15 @@ def is_pair_data_exists(pair, timeframe, timestamp):
 def get_pair_data(pair, timeframe, timestamp):
     pair_index, created = PairIndex.objects.get_or_create(pair=pair, timeframe=timeframe)
     try:
+        # # TODO временный костыль, таких ошибок возникать не должно
+        # if len(PairData.objects.filter(pair_index=pair_index, open_time=timestamp_to_datetime(timestamp)).all()) > 1:
+        #     first = True
+        #     for p in PairData.objects.filter(pair_index=pair_index, open_time=timestamp_to_datetime(timestamp)).all():
+        #         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:::", p)
+        #         if first:
+        #             first = False
+        #         else:
+        #            p.delete()
         return PairData.objects.get(pair_index=pair_index, open_time=timestamp_to_datetime(timestamp))
     except PairData.DoesNotExist:
         return None
@@ -80,8 +89,11 @@ def get_and_save_candle(pair, timeframe, start_ts):
     else:
         print('create')
         pair_index, created = PairIndex.objects.get_or_create(pair=pair, timeframe=timeframe)
+        print("?", pair_index, created)
         candle = get_candle(pair, timeframe, start_ts, pair_index)
-        print(candle)
+        print('candle=', candle)
+        if candle is None:
+            return None
         pair_data = PairData.create_from(candle)
         pair_data.save()
         return pair_data
