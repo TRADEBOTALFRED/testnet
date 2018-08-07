@@ -79,7 +79,7 @@ def get_and_save_candle(pair, timeframe, start_ts):
         return res
     else:
         print('create')
-        pair_index = PairIndex.objects.get(pair=pair, timeframe=timeframe)
+        pair_index, created = PairIndex.objects.get_or_create(pair=pair, timeframe=timeframe)
         candle = get_candle(pair, timeframe, start_ts, pair_index)
         print(candle)
         pair_data = PairData.create_from(candle)
