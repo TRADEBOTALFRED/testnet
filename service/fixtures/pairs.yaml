@@ -4,3 +4,14 @@
     name: 'ETHBTC'
     market: 1
 
+- model: service.Pair
+  pk: 2
+  fields:
+    name: 'BTCUSDT'
+    market: 1
+
+- model: service.Pair
+  pk: 3
+  fields:
+    name: 'ETHUSDT'
+    market: 1
