@@ -3,10 +3,30 @@
 	<body>
 		<h1>Total: {{candles|length}} records</h1>
 		<div>
+            <table>
+                <tr>
+                    <th>Pair</th>
+                    <th>Interval</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Open</th>
+                    <th>Close</th>
+                    <th>Volume</th>
+                    <th>Open time</th>
+                </tr>
             {% for candle in candles %}
-                {{ candle }}
-                <br/>
+                <tr>
+                    <td>{{ candle.pair_index.pair }}</td>
+                    <td>{{ candle.pair_index.timeframe.name }}</td>
+                    <td>{{ candle.high_price }}</td>
+                    <td>{{ candle.low_price }}</td>
+                    <td>{{ candle.open_price }}</td>
+                    <td>{{ candle.close_price }}</td>
+                    <td>{{ candle.volume }}</td>
+                    <td>{{ candle.open_time | date:"M d, Y, h:i" }}</td>
+                </tr>
             {% endfor %}
+            </table>
 		</div>
 	</body>
 </html>
