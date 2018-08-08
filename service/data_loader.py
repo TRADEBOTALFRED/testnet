@@ -4,10 +4,10 @@ import time
 from service.models import *
 from .markets import binance_api
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.utils import timezone
 
-MAX_DOWNLOADS_PER_TIME = 100
+MAX_DOWNLOADS_PER_TIME = 1
 available_to_download_per_time = MAX_DOWNLOADS_PER_TIME
 
 
@@ -26,11 +26,25 @@ def cron_task():
     global available_to_download_per_time
     available_to_download_per_time = MAX_DOWNLOADS_PER_TIME
     timestamp = int(time.time())
+    load_5m_for(timestamp, True)
+
+
+def load_retro_task():
+    print('load retro task')
+    timestamp = int(time.time())
+    d = timedelta(days=1).total_seconds()
+    for i in range(0, 400):
+        timestamp -= d
+        load_5m_for(timestamp, False)
+
+
+def load_5m_for(timestamp, aggregate):
     timeframe = Timeframe.objects.get(pk=1)
     start_ts = get_start_timestamp(timestamp, timeframe)
 
     download_all_pairs(start_ts, timeframe)
-    aggregate_all(timestamp)
+    if aggregate:
+        aggregate_all(timestamp)
 
 
 def download_all_pairs(start_ts, timeframe):
@@ -147,5 +161,3 @@ def try_aggregate_pair_data(timeframe, pair, start_ts, end_ts):
     print('=>', candle)
     candle.save()
     aggregate_all(candle.open_time.timestamp())
-
-

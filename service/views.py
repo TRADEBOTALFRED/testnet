@@ -20,6 +20,11 @@ def tasks(request):
     #     return JsonResponse({}, status=405)
 
 
+def retro_tasks(request):
+    data_loader.load_retro_task()
+    return JsonResponse({}, status=302)
+
+
 def candles_list(request):
     pair_name = request.GET.get('pair')
     if pair_name is not None and len(pair_name) == 0:
