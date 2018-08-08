@@ -29,10 +29,14 @@ def cron_task():
     load_5m_for(timestamp, True)
 
 
-def load_retro_task():
+def load_retro_task(request):
     print('load retro task')
     timestamp = int(time.time())
-    d = timedelta(days=1).total_seconds()
+    delta = request.GET.get('delta')
+    if delta is None or len(delta) == 0:
+        delta = '24'
+    delta = int(delta)
+    d = timedelta(hours=delta).total_seconds()
     for i in range(0, 400):
         timestamp -= d
         load_5m_for(timestamp, False)

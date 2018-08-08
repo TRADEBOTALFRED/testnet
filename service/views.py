@@ -21,7 +21,7 @@ def tasks(request):
 
 
 def retro_tasks(request):
-    data_loader.load_retro_task()
+    data_loader.load_retro_task(request)
     return JsonResponse({}, status=302)
 
 
