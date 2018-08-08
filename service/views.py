@@ -44,6 +44,11 @@ def candles_list(request):
             print('tf=', timeframe)
             pair_indexes = PairIndex.objects.get(pair=pair, timeframe=timeframe)
             res = res.filter(pair_index=pair_indexes)
+
     res = res.order_by('open_time')
+
+    limit = request.GET.get('limit')
+    if limit is not None and len(limit) > 0:
+        res = res[:int(limit)]
 
     return render(request, 'data/list.html', {'candles': res})
