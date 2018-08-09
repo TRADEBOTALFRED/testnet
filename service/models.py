@@ -48,7 +48,7 @@ class PairData(models.Model):
     low_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     open_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     close_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
-    volume = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=7)
+    volume = models.DecimalField(max_digits=12, decimal_places=7)
     open_time = models.DateTimeField(default=timezone.now)
     close_time = models.DateTimeField(default=timezone.now)
 
