@@ -102,7 +102,7 @@ def get_pair_data(pair, timeframe, timestamp):
 def get_and_save_candle(pair, timeframe, start_ts):
     res = get_pair_data(pair, timeframe, start_ts)
     if res is not None:
-        print('found')
+        #print('found')
         return res
     else:
         print('create')
