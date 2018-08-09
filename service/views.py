@@ -32,8 +32,13 @@ def candles_list(request):
     timeframe_min = request.GET.get('timeframe')
     if timeframe_min is not None and len(timeframe_min) == 0:
         timeframe_min = None
+    from_date = request.GET.get('from_date')
+    if from_date is not None and len(from_date) == 0:
+        from_date = None
 
     res = PairData.objects
+    if from_date is not None:
+        res = res.filter(open_time__gte=from_date)
     if pair_name is not None:
         pair = Pair.objects.get(name=pair_name)
         if timeframe_min is None:
@@ -52,3 +57,5 @@ def candles_list(request):
         res = res[:int(limit)]
 
     return render(request, 'data/list.html', {'candles': res})
+
+

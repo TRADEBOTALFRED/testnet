@@ -132,7 +132,7 @@ def aggregate_candle(parts, pair_index):
     res.high_price = parts[0].high_price
     res.low_price = parts[0].low_price
     res.close_price = parts[-1].close_price
-    res.volume = parts[0].volume
+    res.volume = 0
     res.close_time = parts[-1].close_time
 
     for part in parts:
