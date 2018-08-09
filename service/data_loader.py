@@ -68,11 +68,11 @@ def aggregate_timeframe(timeframe, timestamp):
     end_ts = start_ts + timeframe.seconds()
     # print(timeframe, timestamp_to_datetime(start_ts), timestamp_to_datetime(end_ts))
     if timestamp < end_ts + 100:
-        print('not ready')
+        #print('not ready')
         return
     for pair in Pair.objects.all():
         if is_pair_data_exists(pair, timeframe, start_ts):
-            print('already exists')
+            #print('already exists')
             continue
         print('aggregating..')
         try_aggregate_pair_data(timeframe, pair, start_ts, end_ts)
