@@ -74,7 +74,7 @@ def aggregate_timeframe(timeframe, timestamp):
         if is_pair_data_exists(pair, timeframe, start_ts):
             #print('already exists')
             continue
-        print('aggregating..')
+        #print('aggregating..')
         try_aggregate_pair_data(timeframe, pair, start_ts, end_ts)
 
 
