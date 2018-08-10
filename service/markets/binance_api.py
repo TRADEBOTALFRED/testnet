@@ -41,6 +41,9 @@ def get_candle(pair, timeframe, start_ts, pair_index):
     res = PairData()
     res.pair_index = pair_index
     open_time = round(rec[0] / 1000)
+    if open_time != start_ts:
+        print('open_time:', open_time, timestamp_to_datetime(open_time))
+        print('start_ts:', start_ts, timestamp_to_datetime(start_ts))
     assert open_time == start_ts
     res.open_time = timestamp_to_datetime(open_time)
     res.open_price = decimal.Decimal(rec[1])
