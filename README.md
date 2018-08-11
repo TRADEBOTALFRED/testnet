@@ -14,3 +14,7 @@ python manage.py loaddata service/fixtures/pairs.yaml
 
 
 http://trolsoft.pythonanywhere.com/api/cron/
+http://trolsoft.pythonanywhere.com/data/candles/?pair=ETHBTC&timeframe=60&from_date=2018-08-08&limit=10
+
+http://localhost:8000/api/cron/
+http://localhost:8000/data/candles/?pair=ETHBTC&from_date=2018-08-08&timeframe=5

@@ -30,16 +30,35 @@ def cron_task():
 
 
 def load_retro_task(request):
-    print('load retro task')
-    timestamp = int(time.time())
-    delta = request.GET.get('delta')
-    if delta is None or len(delta) == 0:
-        delta = '24'
-    delta = int(delta)
-    d = timedelta(hours=delta).total_seconds()
-    for i in range(0, 400):
-        timestamp -= d
-        load_5m_for(timestamp, False)
+    # print('load retro task')
+    # timestamp = int(time.time())
+    # delta = request.GET.get('delta')
+    # if delta is None or len(delta) == 0:
+    #     delta = '24'
+    # delta = int(delta)
+    # d = timedelta(hours=delta).total_seconds()
+    # for i in range(0, 400):
+    #     timestamp -= d
+    #     load_5m_for(timestamp, False)
+    m5 = Timeframe.objects.get(pk=1)
+    indexes = PairIndex.objects.filter(timeframe=m5).all()
+    data = PairData.objects.filter(pair_index__in=indexes).all()
+    print('Total 5m: ', len(data))
+    print('Total others: ', len(PairData.objects.exclude(pair_index__in=indexes).all()))
+    ts = {}
+    tss = []
+    for d in data:
+        ts[d.open_time.timestamp()] = 0
+    for t in ts.keys():
+        tss.append(t)
+    tss.sort()
+    for t in tss:
+        print(t)
+        if t < 1503079800.0:
+            continue
+        load_5m_for(t, True)
+        # data_loader.aggregate_all(t)
+        # time.sleep(5)
 
 
 def load_5m_for(timestamp, aggregate):

@@ -42,9 +42,9 @@ def get_candle(pair, timeframe, start_ts, pair_index):
     res.pair_index = pair_index
     open_time = round(rec[0] / 1000)
     if open_time != start_ts:
-        print('Wrong binance result!')
-        print('open_time:', open_time, timestamp_to_datetime(open_time))
-        print('start_ts:', start_ts, timestamp_to_datetime(start_ts))
+        print('Wrong binance result!  (length =', len(data), ')')
+        print('open_time (from response):', open_time, timestamp_to_datetime(open_time))
+        print('start_ts (requested):', start_ts, timestamp_to_datetime(start_ts))
         print('\n')
         return None
     assert open_time == start_ts
