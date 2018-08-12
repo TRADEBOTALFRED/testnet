@@ -56,9 +56,9 @@ def load_retro_task(request):
         tss.append(t)
     tss.sort()
     for i in range(0, 10000):
-        ind = random.randint(len(tss))
+        ind = random.randint(0, len(tss))
         t = tss[ind]
-        print(t)
+        print(t, ind)
         #if t < 1503079800.0:
         #    continue
         available_to_download_per_time = MAX_DOWNLOADS_PER_TIME * 10
