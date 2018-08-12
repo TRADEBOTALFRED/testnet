@@ -7,7 +7,7 @@ from .markets import binance_api
 from datetime import datetime, timedelta
 from django.utils import timezone
 
-MAX_DOWNLOADS_PER_TIME = 1
+MAX_DOWNLOADS_PER_TIME = 100
 available_to_download_per_time = MAX_DOWNLOADS_PER_TIME
 
 
@@ -40,6 +40,8 @@ def load_retro_task(request):
     # for i in range(0, 400):
     #     timestamp -= d
     #     load_5m_for(timestamp, False)
+    global available_to_download_per_time
+    available_to_download_per_time = MAX_DOWNLOADS_PER_TIME*10
     m5 = Timeframe.objects.get(pk=1)
     indexes = PairIndex.objects.filter(timeframe=m5).all()
     data = PairData.objects.filter(pair_index__in=indexes).all()
@@ -54,8 +56,9 @@ def load_retro_task(request):
     tss.sort()
     for t in tss:
         print(t)
-        if t < 1503079800.0:
-            continue
+        #if t < 1503079800.0:
+        #    continue
+        available_to_download_per_time = MAX_DOWNLOADS_PER_TIME * 10
         load_5m_for(t, True)
         # data_loader.aggregate_all(t)
         # time.sleep(5)
