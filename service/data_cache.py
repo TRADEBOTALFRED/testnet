@@ -55,8 +55,6 @@ def get_pair_data(pair, timeframe, timestamp):
     if data is None:
         data = load_pair_data(pair_index, timestamp)
         cache.set(key, data)
-    else:
-        print('hit-pair-data ' + key)
 
     return data
 
