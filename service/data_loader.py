@@ -127,7 +127,8 @@ def get_and_save_candle(pair, timeframe, start_ts):
 
 
 def get_candle(pair, timeframe, start_ts, pair_index):
-    market_name = pair.market.name
+    #market_name = pair.market.name
+    market_name = data_cache.get_pair_market_name(pair)
 
     if market_name == 'Binance':
         return binance_api.get_candle(pair, timeframe, start_ts, pair_index)

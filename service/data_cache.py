@@ -3,7 +3,6 @@ from django.core.cache import cache
 from datetime import datetime, timedelta
 from django.utils import timezone
 
-
 from service.models import Timeframe, Pair, PairIndex, PairData
 
 
@@ -75,3 +74,12 @@ def load_pair_data(pair_index, timestamp):
         return PairData.objects.get(pair_index=pair_index, open_time=timestamp_to_datetime(timestamp))
     except PairData.DoesNotExist:
         return None
+
+
+def get_pair_market_name(pair):
+    key = 'pair_market_' + str(pair.pk)
+    name = cache.get(key)
+    if name is None:
+        name = pair.market.name
+        cache.set(key, name)
+    return name
