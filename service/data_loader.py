@@ -113,7 +113,7 @@ def get_and_save_candle(pair, timeframe, start_ts):
         #print('found')
         return res
     else:
-        print('create')
+        #print('create')
         #pair_index, created = PairIndex.objects.get_or_create(pair=pair, timeframe=timeframe)
         pair_index = data_cache.get_pair_index(pair, timeframe)
         #print("?", pair_index, created)
