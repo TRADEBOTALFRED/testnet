@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 import random
 
-MAX_DOWNLOADS_PER_TIME = 100
+MAX_DOWNLOADS_PER_TIME = 10
 available_to_download_per_time = MAX_DOWNLOADS_PER_TIME
 
 
