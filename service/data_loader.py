@@ -1,6 +1,8 @@
 import decimal
 import time
 
+from service import data_cache
+from service.data_cache import get_timeframe_5min
 from service.models import *
 from .markets import binance_api
 
@@ -15,11 +17,6 @@ available_to_download_per_time = MAX_DOWNLOADS_PER_TIME
 def get_start_timestamp(timestamp, timeframe):
     frame_sec = timeframe.seconds()
     return int(timestamp / frame_sec) * frame_sec - frame_sec
-
-
-def timestamp_to_datetime(ts):
-    dt = datetime.fromtimestamp(int(ts))
-    return timezone.make_aware(dt, timezone.utc)
 
 
 def cron_task():
@@ -43,8 +40,9 @@ def load_retro_task(request):
     #     load_5m_for(timestamp, False)
     global available_to_download_per_time
     available_to_download_per_time = MAX_DOWNLOADS_PER_TIME*10
-    m5 = Timeframe.objects.get(pk=1)
-    indexes = PairIndex.objects.filter(timeframe=m5).all()
+    m5 = get_timeframe_5min()
+    #indexes = PairIndex.objects.filter(timeframe=m5).all()
+    indexes = data_cache.get_pair_indexes(m5)
     data = PairData.objects.filter(pair_index__in=indexes).all()
     print('Total 5m: ', len(data))
     print('Total others: ', len(PairData.objects.exclude(pair_index__in=indexes).all()))
@@ -68,7 +66,7 @@ def load_retro_task(request):
 
 
 def load_5m_for(timestamp, aggregate):
-    timeframe = Timeframe.objects.get(pk=1)
+    timeframe = get_timeframe_5min()
     start_ts = get_start_timestamp(timestamp, timeframe)
 
     download_all_pairs(start_ts, timeframe)
@@ -77,7 +75,7 @@ def load_5m_for(timestamp, aggregate):
 
 
 def download_all_pairs(start_ts, timeframe):
-    for pair in Pair.objects.all():
+    for pair in data_cache.get_all_pairs():
         get_and_save_candle(pair, timeframe, start_ts)
 
 
@@ -95,7 +93,7 @@ def aggregate_timeframe(timeframe, timestamp):
     if timestamp < end_ts + 100:
         #print('not ready')
         return
-    for pair in Pair.objects.all():
+    for pair in data_cache.get_all_pairs():
         if is_pair_data_exists(pair, timeframe, start_ts):
             #print('already exists')
             continue
@@ -104,35 +102,21 @@ def aggregate_timeframe(timeframe, timestamp):
 
 
 def is_pair_data_exists(pair, timeframe, timestamp):
-    return get_pair_data(pair, timeframe, timestamp) is not None
+    return data_cache.get_pair_data(pair, timeframe, timestamp) is not None
 
 
-def get_pair_data(pair, timeframe, timestamp):
-    pair_index, created = PairIndex.objects.get_or_create(pair=pair, timeframe=timeframe)
-    try:
-        # TODO временный костыль, таких ошибок возникать не должно
-        if len(PairData.objects.filter(pair_index=pair_index, open_time=timestamp_to_datetime(timestamp)).all()) > 1:
-            first = True
-            for p in PairData.objects.filter(pair_index=pair_index, open_time=timestamp_to_datetime(timestamp)).all():
-                print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:::", p)
-                if first:
-                    first = False
-                else:
-                   p.delete()
-        return PairData.objects.get(pair_index=pair_index, open_time=timestamp_to_datetime(timestamp))
-    except PairData.DoesNotExist:
-        return None
 
 
 def get_and_save_candle(pair, timeframe, start_ts):
-    res = get_pair_data(pair, timeframe, start_ts)
+    res = data_cache.get_pair_data(pair, timeframe, start_ts)
     if res is not None:
         #print('found')
         return res
     else:
         print('create')
-        pair_index, created = PairIndex.objects.get_or_create(pair=pair, timeframe=timeframe)
-        print("?", pair_index, created)
+        #pair_index, created = PairIndex.objects.get_or_create(pair=pair, timeframe=timeframe)
+        pair_index = data_cache.get_pair_index(pair, timeframe)
+        #print("?", pair_index, created)
         candle = get_candle(pair, timeframe, start_ts, pair_index)
         print('candle=', candle)
         if candle is None:
@@ -170,12 +154,12 @@ def aggregate_candle(parts, pair_index):
 def try_aggregate_pair_data(timeframe, pair, start_ts, end_ts):
     # if timeframe.pk > 5:
     #     return
-    part_frame = Timeframe.objects.get(pk=1)
+    part_frame = get_timeframe_5min()
     #    print(timeframe, '->', part_frame)
 
     subpairs = []
     for ts in range(start_ts, end_ts, part_frame.seconds()):
-        part_pair = get_pair_data(pair, part_frame, ts)
+        part_pair = data_cache.get_pair_data(pair, part_frame, ts)
         if part_pair is None:
             global available_to_download_per_time
             if available_to_download_per_time > 0:
@@ -185,7 +169,8 @@ def try_aggregate_pair_data(timeframe, pair, start_ts, end_ts):
         if part_pair is None:
             return
         subpairs.append(part_pair)
-    pair_index = PairIndex.objects.get(pair=pair, timeframe=timeframe)
+    #pair_index = PairIndex.objects.get(pair=pair, timeframe=timeframe)
+    pair_index = data_cache.get_pair_index(pair, timeframe)
     candle = aggregate_candle(subpairs, pair_index)
     print('=>', candle)
     candle.save()
