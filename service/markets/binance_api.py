@@ -7,6 +7,7 @@ import binance.helpers
 from service.models import PairIndex, PairData
 from django.utils import timezone
 
+binance_api_client = Client("", "")
 
 def timestamp_to_datetime(ts):
     dt = datetime.fromtimestamp(int(ts))
@@ -25,8 +26,8 @@ def interval_from_timeframe(timeframe):
 
 
 def get_candle(pair, timeframe, start_ts, pair_index):
-    api = Client("", "")
-    data = api.get_klines(
+    #api = Client("", "")
+    data = binance_api_client.get_klines(
         symbol=pair.name,
         interval=interval_from_timeframe(timeframe),
         limit=1,#500,

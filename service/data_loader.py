@@ -39,9 +39,9 @@ def load_retro_task(request):
     #     timestamp -= d
     #     load_5m_for(timestamp, False)
     global available_to_download_per_time
-    available_to_download_per_time = MAX_DOWNLOADS_PER_TIME*10
+    available_to_download_per_time = MAX_DOWNLOADS_PER_TIME * 10
     m5 = get_timeframe_5min()
-    #indexes = PairIndex.objects.filter(timeframe=m5).all()
+    # indexes = PairIndex.objects.filter(timeframe=m5).all()
     indexes = data_cache.get_pair_indexes(m5)
     data = PairData.objects.filter(pair_index__in=indexes).all()
     print('Total 5m: ', len(data))
@@ -57,7 +57,7 @@ def load_retro_task(request):
         ind = random.randint(0, len(tss))
         t = tss[ind]
         print(t, ind)
-        #if t < 1503079800.0:
+        # if t < 1503079800.0:
         #    continue
         available_to_download_per_time = MAX_DOWNLOADS_PER_TIME * 10
         load_5m_for(t, True)
@@ -91,13 +91,13 @@ def aggregate_timeframe(timeframe, timestamp):
     end_ts = start_ts + timeframe.seconds()
     # print(timeframe, timestamp_to_datetime(start_ts), timestamp_to_datetime(end_ts))
     if timestamp < end_ts + 100:
-        #print('not ready')
+        # print('not ready')
         return
     for pair in data_cache.get_all_pairs():
         if is_pair_data_exists(pair, timeframe, start_ts):
-            #print('already exists')
+            # print('already exists')
             continue
-        #print('aggregating..')
+        # print('aggregating..')
         try_aggregate_pair_data(timeframe, pair, start_ts, end_ts)
 
 
@@ -105,18 +105,16 @@ def is_pair_data_exists(pair, timeframe, timestamp):
     return data_cache.get_pair_data(pair, timeframe, timestamp) is not None
 
 
-
-
 def get_and_save_candle(pair, timeframe, start_ts):
     res = data_cache.get_pair_data(pair, timeframe, start_ts)
     if res is not None:
-        #print('found')
+        # print('found')
         return res
     else:
-        #print('create')
-        #pair_index, created = PairIndex.objects.get_or_create(pair=pair, timeframe=timeframe)
+        # print('create')
+        # pair_index, created = PairIndex.objects.get_or_create(pair=pair, timeframe=timeframe)
         pair_index = data_cache.get_pair_index(pair, timeframe)
-        #print("?", pair_index, created)
+        # print("?", pair_index, created)
         candle = get_candle(pair, timeframe, start_ts, pair_index)
         print('candle=', candle)
         if candle is None:
@@ -127,7 +125,7 @@ def get_and_save_candle(pair, timeframe, start_ts):
 
 
 def get_candle(pair, timeframe, start_ts, pair_index):
-    #market_name = pair.market.name
+    # market_name = pair.market.name
     market_name = data_cache.get_pair_market_name(pair)
 
     if market_name == 'Binance':
@@ -170,7 +168,7 @@ def try_aggregate_pair_data(timeframe, pair, start_ts, end_ts):
         if part_pair is None:
             return
         subpairs.append(part_pair)
-    #pair_index = PairIndex.objects.get(pair=pair, timeframe=timeframe)
+    # pair_index = PairIndex.objects.get(pair=pair, timeframe=timeframe)
     pair_index = data_cache.get_pair_index(pair, timeframe)
     candle = aggregate_candle(subpairs, pair_index)
     print('=>', candle)

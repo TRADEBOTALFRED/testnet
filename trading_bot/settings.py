@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_celery_beat',               # doesn't used
     'background_task',                  # doesn't used
     'debug_toolbar',
+    'django_extensions',
     'service'
 ]
 
