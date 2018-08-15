@@ -43,13 +43,13 @@ class PairIndex(models.Model):
 
 
 class PairData(models.Model):
-    pair_index = models.ForeignKey(PairIndex, on_delete=models.CASCADE)
+    pair_index = models.ForeignKey(PairIndex, on_delete=models.CASCADE,db_index=True)
     high_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     low_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     open_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     close_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     volume = models.DecimalField(max_digits=12, decimal_places=6)
-    open_time = models.DateTimeField(default=timezone.now)
+    open_time = models.DateTimeField(default=timezone.now,db_index=True)
     close_time = models.DateTimeField(default=timezone.now)
 
     def create_from(candle):
