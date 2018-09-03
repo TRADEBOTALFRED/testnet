@@ -116,7 +116,7 @@ def get_and_save_candle(pair, timeframe, start_ts):
         pair_index = data_cache.get_pair_index(pair, timeframe)
         # print("?", pair_index, created)
         candle = get_candle(pair, timeframe, start_ts, pair_index)
-        print('candle=', candle)
+        print('->', candle)
         if candle is None:
             return None
         pair_data = PairData.create_from(candle)

@@ -29,9 +29,7 @@ def candles_list(request):
     pair_name = request.GET.get('pair')
     if pair_name is not None and len(pair_name) == 0:
         pair_name = None
-    timeframe_min = request.GET.get('timeframe')
-    if timeframe_min is not None and len(timeframe_min) == 0:
-        timeframe_min = None
+    timeframe = parse_timeframe(request.GET.get('timeframe'))
     from_date = request.GET.get('from_date')
     if from_date is not None and len(from_date) == 0:
         from_date = None
@@ -41,11 +39,10 @@ def candles_list(request):
         res = res.filter(open_time__gte=from_date)
     if pair_name is not None:
         pair = Pair.objects.get(name=pair_name)
-        if timeframe_min is None:
+        if timeframe is None:
             pair_indexes = PairIndex.objects.filter(pair=pair).all()
             res = res.filter(pair_index__in=pair_indexes)
         else:
-            timeframe = Timeframe.objects.get(minutes=timeframe_min)
             print('tf=', timeframe)
             pair_indexes = PairIndex.objects.get(pair=pair, timeframe=timeframe)
             res = res.filter(pair_index=pair_indexes)
@@ -58,4 +55,20 @@ def candles_list(request):
 
     return render(request, 'data/list.html', {'candles': res})
 
+
+def parse_timeframe(s):
+    if s is None:
+        return None
+    s = s.strip().lower()
+    if len(s) == 0:
+        return None
+    if s.endswith('d'):
+        minutes = int(s[:-1]) * 1440
+    elif s.endswith('h'):
+        minutes = int(s[:-1]) * 60
+    elif s.endswith('m'):
+        minutes = int(s[:-1])
+    else:
+        minutes = int(s)
+    return Timeframe.objects.get(minutes=minutes)
 

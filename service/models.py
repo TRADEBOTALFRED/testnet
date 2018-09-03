@@ -17,43 +17,45 @@ class Market(models.Model):
 
 class Timeframe(models.Model):
     name = models.CharField(max_length=16)
-    minutes = models.IntegerField(default=1)
+    minutes = models.IntegerField(default=1, db_index=True)
 
     def __str__(self):
-        return "{0} ({1} min)".format(self.name, self.minutes)
+        #return "{0} ({1} min)".format(self.name, self.minutes)
+        return "{0}".format(self.name)
 
     def seconds(self):
         return self.minutes * 60
 
 
 class Pair(models.Model):
-    name = models.CharField(max_length=80)
-    market = models.ForeignKey(Market, on_delete=models.CASCADE)
+    name = models.CharField(max_length=80, db_index=True)
+    market = models.ForeignKey(Market, on_delete=models.CASCADE, db_index=True)
 
     def __str__(self):
         return "{0} {1}".format(self.name, self.market)
 
 
 class PairIndex(models.Model):
-    pair = models.ForeignKey(Pair, on_delete=models.CASCADE)
-    timeframe = models.ForeignKey(Timeframe, on_delete=models.CASCADE)
+    pair = models.ForeignKey(Pair, on_delete=models.CASCADE, db_index=True)
+    timeframe = models.ForeignKey(Timeframe, on_delete=models.CASCADE, db_index=True)
 
     def __str__(self):
         return "{0} - {1}".format(self.pair, self.timeframe)
 
 
 class PairData(models.Model):
-    pair_index = models.ForeignKey(PairIndex, on_delete=models.CASCADE,db_index=True)
+    pair_index = models.ForeignKey(PairIndex, on_delete=models.CASCADE, db_index=True)
     high_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     low_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     open_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     close_price = models.DecimalField(max_digits=PRICE_MAX_DIGITS, decimal_places=PRICE_DEC_PLACES)
     volume = models.DecimalField(max_digits=12, decimal_places=6)
-    open_time = models.DateTimeField(default=timezone.now,db_index=True)
+    open_time = models.DateTimeField(default=timezone.now, db_index=True)
     close_time = models.DateTimeField(default=timezone.now)
 
     def create_from(candle):
-        return PairData.objects.create(pair_index=candle.pair_index, open_time=candle.open_time, close_time=candle.close_time,
+        return PairData.objects.create(pair_index=candle.pair_index, open_time=candle.open_time,
+                                       close_time=candle.close_time,
                                        open_price=candle.open_price, high_price=candle.high_price,
                                        low_price=candle.low_price, close_price=candle.close_price, volume=candle.volume)
         # self.open_time = candle.open_time
